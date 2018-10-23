@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"> </script>
+</head>
+<body>
+<!--<img id="target" src="data/concepts_datasets/insect/3.%20insect.jpg"></img>-->
+<!--<img id="target2" src="data/concepts_datasets/plant/49.%20maxresdefault.jpg"></img>-->
+<!--<img id="target3" src="data/concepts_datasets/others/60.%20cover3.jpg"></img>-->
+
+<script>
+
+  var base = window.location.href.substr(0,window.location.href.lastIndexOf("/"));
+
+  function getModel(name){
+    console.log("Start getModel: " + name);
+    tf.loadModel("indexeddb://" + name).then(function(res){
+      console.log("---loaded: " + name);
+    }).catch(function(err){
+      console.log(name + " not found.");
+      tf.loadModel(base + "/model/resnet50/model.json")
+      .then(function(model){
+
+        console.log("---downloaded: " + name);
+
+        model.save('indexeddb://' + name).then(function(res){
+          console.log("---saved: ", name);
+        }).catch(function(err){
+          console.log(err);
+        })
+      }).catch(function(err){
+        console.log(err);
+      });
+    });
+  }
+
+  getModel("my-model-1");
+  getModel("my-model-2");
+  getModel("my-model-3");
+  getModel("my-model-4");
+  getModel("my-model-5");
+  getModel("my-model-6");
+  getModel("my-model-7");
+  getModel("my-model-8");
+  getModel("my-model-9");
+  getModel("my-model-10");
+
+
+
+
+</script>
+
+</body>
+</html>
