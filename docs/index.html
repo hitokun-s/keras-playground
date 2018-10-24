@@ -10,6 +10,7 @@
 <body>
 <div id="app" class="container">
   <h1>Tensorflow.js model cache experiment</h1>
+  <button class="btn btn-primary" v-on:click="addModel()">add model file</button>
   <ul>
     <li v-for="model in models">
       model (name: {{model.name}}) <span class="label" v-bind:class="{'label-default':model.status==0, 'label-primary': model.status == 1, 'label-success': model.status == 6, 'label-warning':(model.status == 2||model.status==3), 'label-danger':(model.status==4||model.status==5)}">{{translate(model.status)}}</span>
@@ -24,21 +25,11 @@
   new Vue({
     el:"#app",
     data: {
-      models: new Array(10).fill(0).map(function(v,i){return {name: "model" + i, status: 0};})
+      modelIdx: -1,
+      models: []
     },
     mounted: function(){
       console.log("mounted");
-
-      this.getModel("model0");
-      this.getModel("model1");
-      this.getModel("model2");
-      this.getModel("model3");
-      this.getModel("model4");
-      this.getModel("model5");
-      this.getModel("model6");
-      this.getModel("model7");
-      this.getModel("model8");
-      this.getModel("model9");
     },
     methods:{
       translate: function(status){
@@ -52,43 +43,47 @@
           case 5: return "failed to download.";
         }
       },
-      getModel: function(name){
-
-        var self = this;
+      addModel: function(){
+        this.modelIdx++;
+        var name = "model" + this.modelIdx;
+        this.models.push({name: name, status: 0});
+        this.getModel(name);
+      },
+      updateStatus: function(name, status){
         var model = this.models.find(function(m){
           return m.name === name;
         });
+        model.status = status;
+        this.$forceUpdate();
+      },
+      getModel: function(name){
+
+        var self = this;
 
         console.log("Start getModel: " + name);
         tf.loadModel("indexeddb://" + name).then(function(res){
           console.log("---loaded: " + name);
-          console.log("let's update model: " + model.name);
-          model.status = 1;
-          self.$forceUpdate();
+          self.updateStatus(name, 1);
         }).catch(function(err){
           console.log(name + " not found.");
-          model.status = 2;
-          self.$forceUpdate();
+          self.updateStatus(name, 2);
+
           tf.loadModel(base + "/model/resnet50/model.json")
           .then(function(model){
 
             console.log("---downloaded: " + name);
-            model.status = 3;
-            self.$forceUpdate();
+            self.updateStatus(name, 3);
 
             model.save('indexeddb://' + name).then(function(res){
               console.log("---saved: ", name);
-              model.status = 6;
-              self.$forceUpdate();
+              self.updateStatus(name, 6);
             }).catch(function(err){
               console.log(err);
-              model.status = 4;
-              self.$forceUpdate();
+              self.updateStatus(name, 4);
             })
           }).catch(function(err){
             console.log(err);
-            model.status = 5;
-            self.$forceUpdate();
+            self.updateStatus(name, 5);
           });
         });
       }
