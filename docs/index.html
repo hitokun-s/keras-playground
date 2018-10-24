@@ -68,22 +68,27 @@
         }).catch(function(err){
           console.log(name + " not found.");
           model.status = 2;
+          self.$forceUpdate();
           tf.loadModel(base + "/model/resnet50/model.json")
           .then(function(model){
 
             console.log("---downloaded: " + name);
             model.status = 3;
+            self.$forceUpdate();
 
             model.save('indexeddb://' + name).then(function(res){
               console.log("---saved: ", name);
               model.status = 6;
+              self.$forceUpdate();
             }).catch(function(err){
               console.log(err);
               model.status = 4;
+              self.$forceUpdate();
             })
           }).catch(function(err){
             console.log(err);
             model.status = 5;
+            self.$forceUpdate();
           });
         });
       }
