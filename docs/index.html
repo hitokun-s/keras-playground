@@ -16,6 +16,7 @@
       model (name: {{model.name}}) <span class="label" v-bind:class="{'label-default':model.status==0, 'label-primary': model.status == 1, 'label-success': model.status == 6, 'label-warning':(model.status == 2||model.status==3), 'label-danger':(model.status==4||model.status==5)}">{{translate(model.status)}}</span>
     </li>
   </ul>
+  <p>{{errorMes}}</p>
 </div>
 
 <script>
@@ -26,7 +27,8 @@
     el:"#app",
     data: {
       modelIdx: -1,
-      models: []
+      models: [],
+      errorMes:""
     },
     mounted: function(){
       console.log("mounted");
@@ -68,23 +70,27 @@
           console.log(name + " not found.");
           self.updateStatus(name, 2);
 
-          tf.loadModel(base + "/model/resnet50/model.json")
-          .then(function(model){
+          try{
+            tf.loadModel(base + "/model/resnet50/model.json")
+            .then(function(model){
 
-            console.log("---downloaded: " + name);
-            self.updateStatus(name, 3);
+              console.log("---downloaded: " + name);
+              self.updateStatus(name, 3);
 
-            model.save('indexeddb://' + name).then(function(res){
-              console.log("---saved: ", name);
-              self.updateStatus(name, 6);
+              model.save('indexeddb://' + name).then(function(res){
+                console.log("---saved: ", name);
+                self.updateStatus(name, 6);
+              }).catch(function(err){
+                console.log(err);
+                self.updateStatus(name, 4);
+              })
             }).catch(function(err){
               console.log(err);
-              self.updateStatus(name, 4);
-            })
-          }).catch(function(err){
-            console.log(err);
-            self.updateStatus(name, 5);
-          });
+              self.updateStatus(name, 5);
+            });
+          }catch(err){
+            self.errorMes = err.message;
+          }
         });
       }
     }
