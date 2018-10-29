@@ -72,6 +72,8 @@
       getModel: function(name){
 
         tf.setBackend(tf.getBackend(), true);
+        tf.disposeVariables();
+        
         this.info = tf.memory();
 
         var self = this;
