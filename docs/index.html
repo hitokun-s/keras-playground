@@ -42,7 +42,7 @@
     },
     mounted: function(){
       console.log("mounted");
-      this.backend = tf.setBackend();
+      this.backend = tf.getBackend();
     },
     methods:{
       translate: function(status){
@@ -71,7 +71,7 @@
       },
       getModel: function(name){
 
-        tf.setBackend(tf.setBackend());
+        tf.setBackend(tf.getBackend());
         this.info = tf.memory();
 
         var self = this;
