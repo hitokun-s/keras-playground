@@ -71,6 +71,7 @@
       },
       getModel: function(name){
 
+        ENV.engine.safeMode = true;
         tf.setBackend(tf.getBackend(), true);
         tf.disposeVariables();
 
