@@ -71,7 +71,7 @@
       },
       getModel: function(name){
 
-        tf.setBackend("webgl");
+        tf.setBackend(tf.setBackend());
         this.info = tf.memory();
 
         var self = this;
