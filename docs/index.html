@@ -71,7 +71,7 @@
       },
       getModel: function(name){
 
-        tf.setBackend(tf.getBackend());
+        tf.setBackend(tf.getBackend(), true);
         this.info = tf.memory();
 
         var self = this;
