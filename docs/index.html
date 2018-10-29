@@ -16,7 +16,8 @@
       model (name: {{model.name}}) <span class="label" v-bind:class="{'label-default':model.status==0, 'label-primary': model.status == 1, 'label-success': model.status == 6, 'label-warning':(model.status == 2||model.status==3), 'label-danger':(model.status==4||model.status==5)}">{{translate(model.status)}}</span>
     </li>
   </ul>
-  <p>{{errorMes}}</p>
+  <p>backend: {{ backend }}</p>
+  <p v-if="errorMes">error: {{errorMes}}</p>
   <p>memory info:</p>
   <ul v-if="info">
     <li>numBytesInGPU: {{info.numBytesInGPU}}</li>
@@ -36,10 +37,12 @@
       modelIdx: -1,
       models: [],
       errorMes:"",
-      info: null
+      info: null,
+      backend: ""
     },
     mounted: function(){
       console.log("mounted");
+      this.backend = tf.setBackend();
     },
     methods:{
       translate: function(status){
