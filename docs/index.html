@@ -17,6 +17,13 @@
     </li>
   </ul>
   <p>{{errorMes}}</p>
+  <p>memory info:</p>
+  <ul v-if="info">
+    <li>numBytesInGPU: {{info.numBytesInGPU}}</li>
+    <li>numTensors: {{info.numTensors}}</li>
+    <li>numDataBuffers: {{info.numDataBuffers}}</li>
+    <li>numBytes: {{info.numBytes}}</li>
+  </ul>
 </div>
 
 <script>
@@ -28,7 +35,8 @@
     data: {
       modelIdx: -1,
       models: [],
-      errorMes:""
+      errorMes:"",
+      info: null
     },
     mounted: function(){
       console.log("mounted");
@@ -61,8 +69,10 @@
       getModel: function(name){
 
         tf.setBackend("webgl");
+        this.info = tf.memory();
 
         var self = this;
+        var tmpModel = null;
 
         console.log("Start getModel: " + name);
         tf.loadModel("indexeddb://" + name).then(function(res){
@@ -94,6 +104,7 @@
             self.errorMes = err.message;
           }
         });
+
       }
     }
   });
