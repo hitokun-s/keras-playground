@@ -73,7 +73,7 @@
 
         tf.setBackend(tf.getBackend(), true);
         tf.disposeVariables();
-        
+
         this.info = tf.memory();
 
         var self = this;
@@ -83,6 +83,8 @@
         tf.loadModel("indexeddb://" + name).then(function(res){
           console.log("---loaded: " + name);
           self.updateStatus(name, 1);
+          tmpModel = res;
+          tmpModel.dispose();
         }).catch(function(err){
           console.log(name + " not found.");
           self.updateStatus(name, 2);
@@ -97,6 +99,8 @@
               model.save('indexeddb://' + name).then(function(res){
                 console.log("---saved: ", name);
                 self.updateStatus(name, 6);
+                tmpModel = res;
+                tmpModel.dispose();
               }).catch(function(err){
                 console.log(err);
                 self.updateStatus(name, 4);
