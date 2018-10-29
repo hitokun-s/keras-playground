@@ -96,10 +96,12 @@
               console.log("---downloaded: " + name);
               self.updateStatus(name, 3);
 
+              tmpModel = model;
+
               model.save('indexeddb://' + name).then(function(res){
                 console.log("---saved: ", name);
                 self.updateStatus(name, 6);
-                tmpModel = res;
+
                 tmpModel.dispose();
               }).catch(function(err){
                 console.log(err);
