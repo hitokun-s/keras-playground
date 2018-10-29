@@ -78,14 +78,12 @@
         this.info = tf.memory();
 
         var self = this;
-        var tmpModel = null;
 
         console.log("Start getModel: " + name);
         tf.loadModel("indexeddb://" + name).then(function(res){
           console.log("---loaded: " + name);
           self.updateStatus(name, 1);
-          tmpModel = res;
-          tmpModel.dispose();
+
         }).catch(function(err){
           console.log(name + " not found.");
           self.updateStatus(name, 2);
@@ -97,13 +95,10 @@
               console.log("---downloaded: " + name);
               self.updateStatus(name, 3);
 
-              tmpModel = model;
-
               model.save('indexeddb://' + name).then(function(res){
                 console.log("---saved: ", name);
                 self.updateStatus(name, 6);
 
-                tmpModel.dispose();
               }).catch(function(err){
                 console.log(err);
                 self.updateStatus(name, 4);
